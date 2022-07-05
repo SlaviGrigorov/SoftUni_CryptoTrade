@@ -32,8 +32,10 @@ router.get('/details/:id', async (req, res) => {
 
         //Check if user is owner
         let isOwner = false;
+        let isUser = false;
         if(req.user) {
             isOwner = crypto.owner == req.user._id;
+            isUser = true;
         }
 
         //Check if user bought this crypto
@@ -44,7 +46,7 @@ router.get('/details/:id', async (req, res) => {
             }
         }
 
-        res.render('crypto/details', { crypto, isOwner, bought});
+        res.render('crypto/details', { crypto, isOwner, bought, isUser});
 
     } catch (error) {
         console.log('error:', error);
@@ -65,12 +67,12 @@ router.get('/buy/:id', async (req, res) => {
 
 module.exports = router;
 
-router.get('/edit/:id', async (req, res) => {
+router.get('/edit/:id', isUser, async (req, res) => {
     let crypto = await cryptoService.getOne(req.params.id).lean();
     res.render('crypto/edit', { crypto })
 });
 
-router.post('/edit/:id', async (req, res) => {
+router.post('/edit/:id', isUser, async (req, res) => {
     await cryptoService.edit(req.params.id, req.body);
 
     res.redirect(`/crypto/details/${req.params.id}`)
@@ -81,12 +83,12 @@ router.get('/delete/:id', async (req, res) => {
     res.redirect('/crypto/catalog');
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search', isUser, async (req, res) => {
     let crypto = await cryptoService.getAll().lean();
     res.render('crypto/search', { crypto });
 });
 
-router.post('/search', async (req, res) => {
+router.post('/search', isUser, async (req, res) => {
     let {name, payment} = req.body;
     let crypto = await cryptoService.search(name, payment);
     res.render('crypto/search', { crypto });
