@@ -6,7 +6,7 @@ exports.getAll = () => Crypto.find();
 
 exports.getOne = (id) => Crypto.findById(id)
 
-exports.edit = (cryptoId, data) => Crypto.findByIdAndUpdate(cryptoId, data);
+exports.edit = (cryptoId, data) => Crypto.findByIdAndUpdate(cryptoId, data, {runValidators: true});
 
 exports.delete = (cryptoId) => Crypto.findByIdAndDelete(cryptoId);
 

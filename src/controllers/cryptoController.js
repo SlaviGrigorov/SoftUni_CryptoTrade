@@ -73,9 +73,14 @@ router.get('/edit/:id', isUser, async (req, res) => {
 });
 
 router.post('/edit/:id', isUser, async (req, res) => {
-    await cryptoService.edit(req.params.id, req.body);
+    try {
+        await cryptoService.edit(req.params.id, req.body);
+        res.redirect(`/crypto/details/${req.params.id}`)
 
-    res.redirect(`/crypto/details/${req.params.id}`)
+    } catch (error) {
+        let crypto = await cryptoService.getOne(req.params.id).lean();
+        return res.render('crypto/edit', { crypto, error: Object.values(error.errors)[0].message });
+    }
 });
 
 router.get('/delete/:id', async (req, res) => {

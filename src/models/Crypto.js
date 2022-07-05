@@ -10,8 +10,8 @@ const cryptoSchema = new mongoose.Schema({
         type: String,
         required: [true, `Image is required!`],
         validate: {
-            validator: function(){
-                return this.imageUrl.startsWith('http');
+            validator: function(value){
+                return value.startsWith('http');
             },
             message: 'Image should come from a link!'
         }
